@@ -53,7 +53,7 @@ namespace XYAudio
             sampleRate = BitConverter.ToInt32(fileData, 24);
             bitsPerSample = BitConverter.ToInt16(fileData, 34);
             //check for supported bit depth
-            if (!(bitsPerSample == 8 || bitsPerSample == 16 || bitsPerSample == 32))
+            if (!(bitsPerSample == 8 || bitsPerSample == 16 || bitsPerSample == 24 || bitsPerSample == 32))
             {
                 throw new System.ArgumentException("File bit depth is not supported.");
             }
@@ -122,6 +122,12 @@ namespace XYAudio
         public Point[] getSpectrumPoints(int w, int h, double time, int channel)
         {
             return soundData.getSpectrumPoints(w, h, time, channel);
+        }
+
+        //get amplitude percent
+        public Double getAmplitudePercent(Double time, int channel)
+        {
+            return soundData.getAmplitudePercent(time, channel);
         }
 
         //custom tostring method

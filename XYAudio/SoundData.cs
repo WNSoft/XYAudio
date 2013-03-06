@@ -57,6 +57,10 @@ namespace XYAudio
                             samples[curSample] = (int)BitConverter.ToInt16(fileData, sampleIndex);
                             sampleIndex += channels*2;
                             break;
+                        case 24:
+                            samples[curSample] = ((fileData[sampleIndex + 2] << 24) | (fileData[sampleIndex + 1] << 16) | (fileData[sampleIndex] << 8)) >> 8;
+                            sampleIndex += channels*3;
+                            break;
                         case 32:
                             samples[curSample] = (int)BitConverter.ToInt32(fileData, sampleIndex);
                             sampleIndex += channels*4;
@@ -102,8 +106,7 @@ namespace XYAudio
 
         public Point[] getSpectrumPoints(int w, int h, double time, int channel)
         {
-            int curByte = (int) (time * sampleRate * (bitDepth / 8));
-            curByte = curByte / channels;
+            int curByte = (int) ((double) time * sampleRate);
             int[] channelIntData = (int[])channelData[channel - 1];
             ArrayList spectData = new ArrayList();
             if (!(curByte < 32 || curByte > channelIntData.Length - 32))
@@ -131,7 +134,17 @@ namespace XYAudio
             return null;
         }
 
-        //Fast Fourier Transform Method
+        //get amplitude
+        public Double getAmplitudePercent(Double time, int channel)
+        {
+            int curByte = (int)((double)time * sampleRate);
+            int amplitude;
+            if(curByte >= ((int[]) channelData[channel - 1]).Length) amplitude = 0;
+            else amplitude = ((int[]) channelData[channel - 1])[curByte];
+            return (Double) Math.Abs(amplitude) / (Math.Pow(2.0, bitDepth) / 2.0);
+        }
+
+        //fast fourier transform
         private void FFT(ArrayList x)
         {
             int n = x.Count;

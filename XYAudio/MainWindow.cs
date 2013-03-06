@@ -16,6 +16,7 @@ namespace XYAudio
 {
     public partial class MainWindow : Form
     {
+
         Bitmap waveformBMP;
         SoundFile sf = null;
         double duration;
@@ -97,7 +98,7 @@ namespace XYAudio
                     Bitmap overlayWaveform = new Bitmap(waveformBMP);
                     double percentDone = (double)stopwatch.ElapsedMilliseconds / (duration*1000);
                     g = Graphics.FromImage(overlayWaveform);
-                    Pen p = new Pen(Color.Red);
+                    Pen p = new Pen(Color.Black);
                     g.DrawLine(p, new Point((int)(percentDone * pictureBox1.Width), 0), new Point((int)(percentDone * pictureBox1.Width), pictureBox1.Height));
                     pictureBox1.Image = overlayWaveform;
                     g.Dispose();
@@ -116,6 +117,19 @@ namespace XYAudio
                         pictureBox2.Image = spect;
                         g.Dispose();
                     }
+
+
+                    Double ampPercent = sf.getAmplitudePercent((double)stopwatch.ElapsedMilliseconds / 1000, 1);
+                    p = new Pen(Color.Black);
+                    p.Width = 4.0F;
+                    Bitmap amp = new Bitmap(pictureBox3.Width, pictureBox3.Height);
+                    g = Graphics.FromImage(amp);
+                    g.DrawLine(p, new Point(pictureBox3.Width / 2, pictureBox2.Height), new Point(pictureBox3.Width / 2, (int) (pictureBox3.Height - ampPercent*pictureBox3.Height)));
+                    pictureBox3.Image = amp;
+                    g.Dispose();
+                    
+
+
                 }
             }
             stopwatch.Stop();
